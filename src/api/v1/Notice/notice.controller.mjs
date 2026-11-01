@@ -4,17 +4,11 @@ import SendResponse from '../../../utils/SendResponse.mjs';
 import Notice_Constants from './notice.constant.mjs';
 import noticeService from './notice.service.mjs';
 import noticeUtils from './notice.utils.mjs';
+import { validateCreateNotice } from './notice.validator.mjs';
 
 class Notice_Controller {
   Create = async (req, res) => {
     try {
-      const { title, type, target, priority } = req.body;
-      const content = req.body.content || req.body.noticeContent || '';
-
-      if (!title || !content) {
-        throw new Error('Title and notice content are required');
-      }
-
       let doc_link = null;
       const uploadedFile = req.file || (req.files && req.files[0]);
 
@@ -27,14 +21,13 @@ class Notice_Controller {
         doc_link = req.body.doc_link;
       }
 
-      const Created_Notice = await noticeService.create_Notice({
-        title,
-        content,
-        type: type || 'General',
-        target: target || 'All Students & Faculty',
-        priority: priority || 'normal',
+      // Validate notice payload using Zod schema
+      const validatedData = validateCreateNotice({
+        ...req.body,
         doc_link,
       });
+
+      const Created_Notice = await noticeService.create_Notice(validatedData);
 
       SendResponse.success(
         res,
@@ -46,7 +39,7 @@ class Notice_Controller {
       console.error('[NoticeController] Create error:', error);
       SendResponse.error(
         res,
-        StatusCodeConstant.INTERNAL_SERVER_ERROR,
+        StatusCodeConstant.BAD_REQUEST,
         error.message
       );
     }
@@ -66,6 +59,36 @@ class Notice_Controller {
       );
     } catch (error) {
       console.error('[NoticeController] Find error:', error);
+      SendResponse.error(
+        res,
+        StatusCodeConstant.INTERNAL_SERVER_ERROR,
+        error.message
+      );
+    }
+  };
+
+  FindById = async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        throw new Error('Notice ID is required');
+      }
+      const notice = await noticeService.get_Notice_By_Id(id);
+      if (!notice) {
+        return SendResponse.error(
+          res,
+          StatusCodeConstant.NOT_FOUND,
+          'Notice not found'
+        );
+      }
+      SendResponse.success(
+        res,
+        StatusCodeConstant.SUCCESS,
+        'Notice retrieved successfully',
+        notice
+      );
+    } catch (error) {
+      console.error('[NoticeController] FindById error:', error);
       SendResponse.error(
         res,
         StatusCodeConstant.INTERNAL_SERVER_ERROR,

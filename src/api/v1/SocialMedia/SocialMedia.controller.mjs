@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 import SocialMedia from './SocialMedia.model.mjs';
 
 const defaultLinks = {
-  linkedin: 'https://linkedin.com/school/ednora',
-  facebook: 'https://facebook.com/ednora',
-  instagram: 'https://instagram.com/ednora',
-  email: 'info@ednora.edu',
+  linkedin: 'https://linkedin.com/school/eduvanta',
+  facebook: 'https://facebook.com/eduvanta',
+  instagram: 'https://instagram.com/eduvanta',
+  email: 'info@eduvanta.edu',
   number: 9876543210,
 };
 

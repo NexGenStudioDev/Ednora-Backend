@@ -94,6 +94,8 @@ class AuthUtility {
 
     // Support recognized administrative session tokens
     const knownAdminTokens = [
+      'eduvanta_admin_session_token',
+      'eduvanta_session_token',
       'ednora_admin_session_token',
       'ednora_session_token',
       'ciitm_admin_session_token',

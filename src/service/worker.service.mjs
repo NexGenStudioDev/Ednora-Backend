@@ -43,13 +43,13 @@ class NotificationWorker {
       }
 
       const transporter = createTransport();
-      const sender = `"Ednora Academic Portal" <${envConstant.GMAIL_User || 'admissions@ednora.edu'}>`;
+      const sender = `"Eduvanta Academic Portal" <${envConstant.GMAIL_User || 'admissions@eduvanta.edu'}>`;
 
-      let subject = 'Ednora Institutional Notification';
+      let subject = 'Eduvanta Institutional Notification';
       let htmlContent = '';
 
       if (type === 'STUDENT_PROMOTION') {
-        subject = `🎓 Congratulations! Promoted to Semester ${payload.currentSemester} - Ednora`;
+        subject = `🎓 Congratulations! Promoted to Semester ${payload.currentSemester} - Eduvanta`;
         htmlContent = generatePromotionEmail({
           studentName: payload.studentName || 'Student',
           uniqueId: payload.studentId || payload.uniqueId || 'N/A',
@@ -59,7 +59,7 @@ class NotificationWorker {
           date: payload.date || new Date().toLocaleDateString('en-US'),
         });
       } else if (type === 'STUDENT_DEMOTION') {
-        subject = `⚠️ Academic Standing Notice: Term Adjusted to Semester ${payload.currentSemester} - Ednora`;
+        subject = `⚠️ Academic Standing Notice: Term Adjusted to Semester ${payload.currentSemester} - Eduvanta`;
         htmlContent = generateDemotionEmail({
           studentName: payload.studentName || 'Student',
           uniqueId: payload.studentId || payload.uniqueId || 'N/A',
@@ -72,7 +72,7 @@ class NotificationWorker {
       } else {
         // Custom or general notification
         const notifData = payload.notification || payload;
-        subject = notifData.title ? `🔔 ${notifData.title} - Ednora` : 'Official Institutional Notification - Ednora';
+        subject = notifData.title ? `🔔 ${notifData.title} - Eduvanta` : 'Official Institutional Notification - Eduvanta';
         htmlContent = generateNotificationEmail({
           studentName: payload.studentName || 'Student',
           uniqueId: payload.studentId || payload.uniqueId || 'N/A',

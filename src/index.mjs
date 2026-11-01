@@ -30,7 +30,7 @@ app.get('/api/health', (req, res) => {
 app.get('/', (req, res) => {
  
     res.status(200).json({
-      name: 'Ednora Backend API Engine',
+      name: 'Eduvanta Backend API Engine',
       tagline: 'Where Knowledge Finds Its Future.',
       status: 'online',
       port: 3000,

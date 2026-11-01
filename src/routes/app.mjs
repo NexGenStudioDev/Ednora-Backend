@@ -4,7 +4,6 @@ const app = express();
 import cors from 'cors';
 
 import { AuthRouter } from '../api/v1/Auth/Auth.routes.mjs';
-import { RoleRouter } from '../api/v1/Role/Role.routes.mjs';
 import { StatusRouter } from '../api/v1/Status/Status.routes.mjs';
 import { AdmissionRouter } from '../api/v1/Admission/Admission.routes.mjs';
 import { SocialMediaRouter } from '../api/v1/SocialMedia/SocialMedia.routes.mjs';
@@ -43,7 +42,6 @@ app.use(cookieParser());
 app.use(
   '/api',
   AuthRouter,
-  RoleRouter,
   StatusRouter,
   AdmissionRouter,
   FrontendRouter,

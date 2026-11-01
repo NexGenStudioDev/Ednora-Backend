@@ -1,6 +1,6 @@
 
 /**
- * Ednora — Premium Light Theme Student Notification Email
+ * Eduvanta — Premium Light Theme Student Notification Email
  */
 
 const escapeNotificationHtml = (value) =>
@@ -36,7 +36,7 @@ export const generateNotificationEmail = ({
   uniqueId = "N/A",
   title = "Institutional Announcement",
   message =
-    "You have received an official notification from Ednora Administration.",
+    "You have received an official notification from Eduvanta Administration.",
   priority = "Normal",
   date = new Date().toLocaleDateString("en-US", {
     month: "short",
@@ -72,7 +72,7 @@ export const generateNotificationEmail = ({
   <meta name="color-scheme" content="light">
   <meta name="supported-color-schemes" content="light">
 
-  <title>${safeTitle} | Ednora</title>
+  <title>${safeTitle} | Eduvanta</title>
 
   <style>
     body {
@@ -163,7 +163,7 @@ export const generateNotificationEmail = ({
                     <div style="font-family:Georgia,'Times New Roman',serif;
                       font-size:31px;line-height:36px;font-weight:bold;
                       letter-spacing:-1px;color:#12335D;">
-                      Ednora
+                      Eduvanta
                     </div>
 
                     <div style="margin-top:5px;font-size:10px;
@@ -247,7 +247,7 @@ export const generateNotificationEmail = ({
               <p style="margin:0 0 24px;
                 font-family:Georgia,'Times New Roman',serif;
                 font-size:15px;line-height:26px;color:#526D91;">
-                This is an official communication from Ednora
+                This is an official communication from Eduvanta
                 Administration. Please review the notification below
                 and take any necessary action.
               </p>
@@ -263,7 +263,7 @@ export const generateNotificationEmail = ({
                     <div style="margin-bottom:12px;
                       font-size:10px;font-weight:bold;
                       letter-spacing:1.6px;color:#6D83A2;">
-                      MESSAGE FROM EDNORA
+                      MESSAGE FROM EDUVANTA
                     </div>
 
                     <div style="font-family:Arial,Helvetica,sans-serif;
@@ -382,7 +382,7 @@ export const generateNotificationEmail = ({
                     <div style="font-family:Georgia,'Times New Roman',serif;
                       font-size:24px;line-height:30px;font-weight:bold;
                       color:#12335D;">
-                      Ednora
+                      Eduvanta
                     </div>
 
                     <div style="margin-top:5px;
@@ -394,7 +394,7 @@ export const generateNotificationEmail = ({
 
                   <td align="right" valign="middle"
                     style="font-size:10px;line-height:18px;color:#7B8798;">
-                    &copy; ${year} Ednora<br>
+                    &copy; ${year} Eduvanta<br>
                     Institutional ERP<br>
                     Official Communication
                   </td>

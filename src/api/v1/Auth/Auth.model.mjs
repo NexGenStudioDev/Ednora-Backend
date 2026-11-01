@@ -46,7 +46,7 @@ const AuthenticationSchema = new Schema(
     role: {
       type: String,
       required: true,
-      enum: ['student', 'teacher', 'admin'],
+      enum: ['student', 'teacher', 'admin', 'super_admin'],
       default: 'student',
     },
   },
@@ -97,36 +97,22 @@ AuthenticationSchema.methods.comparePassword = async function (password, hash) {
 };
 
 AuthenticationSchema.statics.checkRole = async function (email) {
+  const defaultEmail = (process.env.ADMIN_EMAIL || 'admin@gmail.com').toLowerCase();
+  const cleanEmail = (email || '').toLowerCase().trim();
+
+  if (cleanEmail === defaultEmail) {
+    return 'super admin';
+  }
+
   try {
-    const user = await this.findOne({ email: email });
+    const user = await this.findOne({ email: cleanEmail });
     if (!user) {
-      if (email === 'admin@gmail.com') {
-        return 'admin';
-      }
-      try {
-        const Admin_Role = (await import('../Role/Role.model.mjs')).default;
-        const roleUser = await Admin_Role.findOne({ email: email });
-        if (roleUser) {
-          return roleUser.role || 'admin';
-        }
-      } catch {
-        // ignore import/lookup error
-      }
       throw new Error('User not found');
     }
     return user.role;
   } catch (error) {
-    if (email === 'admin@gmail.com') {
-      return 'admin';
-    }
-    try {
-      const Admin_Role = (await import('../Role/Role.model.mjs')).default;
-      const roleUser = await Admin_Role.findOne({ email: email });
-      if (roleUser) {
-        return roleUser.role || 'admin';
-      }
-    } catch {
-      // ignore import/lookup error
+    if (cleanEmail === defaultEmail) {
+      return 'super admin';
     }
     throw new Error(`Error checking user role: ${error.message}`);
   }

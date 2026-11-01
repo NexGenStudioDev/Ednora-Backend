@@ -37,6 +37,10 @@ class Notice_Service {
     await Notice.findByIdAndDelete(id);
     return notice;
   };
+
+  get_Notice_By_Id = async (id) => {
+    return await Notice.findById(id);
+  };
 }
 
 export default new Notice_Service();

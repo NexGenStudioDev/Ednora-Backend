@@ -3,7 +3,6 @@ import envConstant from '../constant/env.constant.mjs';
 export const DEFAULT_FALLBACK_ORIGIN = 'https://www.growrichmindset.in';
 
 export const DEFAULT_ALLOWED_ORIGINS = Object.freeze([
-  '*',
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:5174',
@@ -95,8 +94,11 @@ export const getAllowedOrigins = () => {
  * @returns {boolean}
  */
 export const isOriginAllowed = (origin) => {
-  // Allow all origins
-  return true;
+  if (!origin || typeof origin !== 'string') return false;
+  const clean = normalizeOrigin(origin);
+  if (!isValidOriginFormat(clean)) return false;
+  const allowed = getAllowedOrigins();
+  return allowed.includes(clean);
 };
 
 /**
@@ -144,8 +146,18 @@ export const resolveFrontendOrigin = (req) => {
 export const createCorsOptions = () => {
   return {
     origin: (origin, callback) => {
-      // Allow all origins, reflecting origin header so withCredentials: true works seamlessly
-      return callback(null, true);
+      // Requests without origin header (e.g. mobile apps, curl, server-to-server)
+      if (!origin) {
+        return callback(null, true);
+      }
+      const clean = normalizeOrigin(origin);
+      if (isOriginAllowed(clean)) {
+        return callback(null, true);
+      }
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[CORS] Rejected origin: "${origin}"`);
+      }
+      return callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

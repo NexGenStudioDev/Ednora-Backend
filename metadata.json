@@ -1,6 +1,6 @@
 {
-  "name": "Ednora Backend API",
-  "description": "Backend API server for Ednora — Where Knowledge Finds Its Future. College management, admissions, courses, and administration.",
+  "name": "Eduvanta Backend API",
+  "description": "Backend API server for Eduvanta — Where Knowledge Finds Its Future. College management, admissions, courses, and administration.",
   "capabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
   ]

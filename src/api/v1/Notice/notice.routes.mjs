@@ -11,6 +11,8 @@ router.post(
   noticeController.Create
 );
 router.get('/v1/notice/find', noticeController.Find);
+router.get('/v1/notice/find/:id', noticeController.FindById);
+router.get('/v1/notice/:id', noticeController.FindById);
 router.delete(
   '/v1/notice/delete/:id',
   AuthMiddleware.Admin,

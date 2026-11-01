@@ -9,7 +9,7 @@ export let createTransport = () => {
       return {
         sendMail: async (options, callback) => {
           console.log(
-            `[Mailer Sim] Email queued to ${options?.to} (Subject: ${options?.subject || 'Ednora Notification'})`
+            `[Mailer Sim] Email queued to ${options?.to} (Subject: ${options?.subject || 'Eduvanta Notification'})`
           );
           const info = {
             messageId: `sim-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,

@@ -1,6 +1,6 @@
 
 /**
- * Ednora — Premium Light Theme Student Promotion Email
+ * Eduvanta — Premium Light Theme Student Promotion Email
  */
 
 const escapeHtml = (value) =>
@@ -75,7 +75,7 @@ export const generatePromotionEmail = ({
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
   <meta name="supported-color-schemes" content="light">
-  <title>Academic Promotion Confirmation | Ednora</title>
+  <title>Academic Promotion Confirmation | Eduvanta</title>
 
   <style>
     body {
@@ -164,7 +164,7 @@ export const generatePromotionEmail = ({
                     <div style="font-family:Georgia,'Times New Roman',serif;
                       font-size:31px;line-height:36px;font-weight:bold;
                       letter-spacing:-1px;color:#12335D;">
-                      Ednora
+                      Eduvanta
                     </div>
 
                     <div style="margin-top:5px;font-size:10px;
@@ -236,7 +236,7 @@ export const generatePromotionEmail = ({
                 of your academic performance and enrollment milestones,
                 you have successfully advanced to the next semester
                 of your program at
-                <strong style="color:#12335D;">Ednora</strong>.
+                <strong style="color:#12335D;">Eduvanta</strong>.
               </p>
 
               <p style="margin:0 0 25px;font-family:Georgia,serif;
@@ -459,7 +459,7 @@ export const generatePromotionEmail = ({
                     <div style="font-family:Georgia,'Times New Roman',serif;
                       font-size:24px;line-height:30px;font-weight:bold;
                       color:#12335D;">
-                      Ednora
+                      Eduvanta
                     </div>
 
                     <div style="margin-top:5px;font-family:Georgia,serif;
@@ -470,7 +470,7 @@ export const generatePromotionEmail = ({
 
                   <td align="right" valign="middle"
                     style="font-size:10px;line-height:18px;color:#7B8798;">
-                    &copy; ${year} Ednora<br>
+                    &copy; ${year} Eduvanta<br>
                     Institutional ERP<br>
                     Official Academic Communication
                   </td>

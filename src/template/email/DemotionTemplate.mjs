@@ -73,7 +73,7 @@ export const generateDemotionEmail = ({
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
   <meta name="supported-color-schemes" content="light">
-  <title>Academic Record Update | Ednora</title>
+  <title>Academic Record Update | Eduvanta</title>
 
   <style>
     body {
@@ -162,7 +162,7 @@ export const generateDemotionEmail = ({
                     <div style="font-family:Georgia,'Times New Roman',serif;
                       font-size:31px;line-height:36px;font-weight:bold;
                       letter-spacing:-1px;color:#12335D;">
-                      Ednora
+                      Eduvanta
                     </div>
 
                     <div style="margin-top:5px;font-size:10px;
@@ -345,7 +345,7 @@ export const generateDemotionEmail = ({
                     <p style="margin:0;font-family:Georgia,serif;
                       font-size:14px;line-height:24px;color:#526D91;">
                       Review your updated academic record through the
-                      Ednora portal. For questions about semester
+                      Eduvanta portal. For questions about semester
                       placement, prerequisite requirements, or your
                       study plan, contact your institution's academic office.
                     </p>
@@ -395,7 +395,7 @@ export const generateDemotionEmail = ({
                     <div style="font-family:Georgia,'Times New Roman',serif;
                       font-size:24px;line-height:30px;font-weight:bold;
                       color:#12335D;">
-                      Ednora
+                      Eduvanta
                     </div>
 
                     <div style="margin-top:5px;font-family:Georgia,serif;
@@ -406,7 +406,7 @@ export const generateDemotionEmail = ({
 
                   <td align="right" valign="middle"
                     style="font-size:10px;line-height:18px;color:#7B8798;">
-                    &copy; ${year} Ednora<br>
+                    &copy; ${year} Eduvanta<br>
                     Institutional ERP<br>
                     Official Academic Communication
                   </td>
