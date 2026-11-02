@@ -21,9 +21,35 @@ import forgotPasswordRouter from '../api/v1/forget-password/ForgotPassword.route
 import { Fee_Routes } from '../api/v1/Fee/fee.routes.mjs';
 import { TestimonialRouter } from '../api/v1/Testimonial/Testimonial.routes.mjs';
 import { QueueRouter } from '../api/v1/Queue/Queue.routes.mjs';
-import { createCorsOptions } from '../utils/origin.utils.mjs';
+import { createCorsOptions, isOriginAllowed } from '../utils/origin.utils.mjs';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+
+// 1. Mount CORS first so every request and preflight is handled immediately
+const corsOptions = createCorsOptions();
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// 2. Explicit CORS header fallback ensuring allowed origins always receive Access-Control headers
+app.use((req, res, next) => {
+  const reqOrigin = req.headers.origin;
+  if (reqOrigin && isOriginAllowed(reqOrigin)) {
+    res.setHeader('Access-Control-Allow-Origin', reqOrigin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, X-App-Version, x-access-token, token, Accept, Origin, X-Requested-With, Range'
+    );
+  }
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -65,10 +91,6 @@ app.use((req, res, next) => {
   console.log('ORIGIN :', req.headers.origin);
   next();
 });
-
-const corsOptions = createCorsOptions();
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true }));

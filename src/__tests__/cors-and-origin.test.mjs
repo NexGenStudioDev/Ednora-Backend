@@ -152,6 +152,18 @@ describe('CORS and Origin Resolution Suite', () => {
       expect(res.headers.get('access-control-allow-origin')).not.toBe('*');
     });
 
+    it('should allow https://growrichmindset.in (without www) with exact ACAO and credentials: true', async () => {
+      const res = await fetch(`${baseUrl}/api/test-cors`, {
+        headers: { Origin: 'https://growrichmindset.in' },
+      });
+
+      expect(res.status).toBe(200);
+      expect(res.headers.get('access-control-allow-origin')).toBe(
+        'https://growrichmindset.in'
+      );
+      expect(res.headers.get('access-control-allow-credentials')).toBe('true');
+    });
+
     it('should allow http://localhost:1420 (Tauri dev) with exact ACAO and credentials: true', async () => {
       const res = await fetch(`${baseUrl}/api/test-cors`, {
         headers: { Origin: 'http://localhost:1420' },

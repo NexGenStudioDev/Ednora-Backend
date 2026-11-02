@@ -100,15 +100,11 @@ class Album_Controller {
     try {
       let getAlbum = await AlbumUtils.findAll();
 
-      if (getAlbum.length < 0) {
-        throw new Error(AlbumConstant.ALBUM_NOT_FOUND);
-      }
-
       SendResponse.success(
         res,
         StatusCodeConstant.SUCCESS,
         AlbumConstant.ALBUM_FOUND,
-        getAlbum
+        getAlbum || []
       );
     } catch (error) {
       SendResponse.error(res, StatusCodeConstant.BAD_REQUEST, error.message);

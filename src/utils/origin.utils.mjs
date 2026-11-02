@@ -1,18 +1,23 @@
 import envConstant from '../constant/env.constant.mjs';
 
-export const DEFAULT_FALLBACK_ORIGIN = 'https://www.growrichmindset.in';
+export const DEFAULT_FALLBACK_ORIGIN = 'https://growrichmindset.in';
 
 export const DEFAULT_ALLOWED_ORIGINS = Object.freeze([
+  'https://growrichmindset.in',
+  'http://growrichmindset.in',
+  'https://www.growrichmindset.in',
+  'http://www.growrichmindset.in',
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:5174',
-  'http://localhost:3001',
   'http://localhost:1420',
   'http://127.0.0.1:3000',
   'http://127.0.0.1:5173',
-  'https://www.growrichmindset.in',
+  'http://127.0.0.1:5174',
+  'http://127.0.0.1:1420',
   'tauri://localhost',
   'http://tauri.localhost',
+  'https://tauri.localhost',
 ]);
 
 /**
@@ -66,30 +71,26 @@ export const getAllowedOrigins = () => {
     process.env.ALLOWED_ORIGINS || envConstant.ALLOWED_ORIGINS || '';
   const fallbackUrl = getFallbackOrigin();
 
-  let origins = [];
+  const set = new Set([...DEFAULT_ALLOWED_ORIGINS]);
+
   if (rawAllowed && typeof rawAllowed === 'string') {
-    origins = rawAllowed
+    rawAllowed
       .split(',')
       .map((entry) => normalizeOrigin(entry))
-      .filter((entry) => isValidOriginFormat(entry));
+      .filter((entry) => isValidOriginFormat(entry))
+      .forEach((entry) => set.add(entry));
   }
 
-  if (origins.length === 0) {
-    origins = [...DEFAULT_ALLOWED_ORIGINS];
-  }
-
-  // Ensure the fallback URL is also recognized if explicitly configured
   const cleanFallback = normalizeOrigin(fallbackUrl);
-  if (cleanFallback && !origins.includes(cleanFallback)) {
-    origins.push(cleanFallback);
+  if (cleanFallback && isValidOriginFormat(cleanFallback)) {
+    set.add(cleanFallback);
   }
 
-  // Deduplicate origins while preserving order
-  return Array.from(new Set(origins));
+  return Array.from(set);
 };
 
 /**
- * Checks if a given origin is present in the allowlist.
+ * Checks if a given origin is present in the allowlist or matches trusted domain patterns.
  * @param {string} origin
  * @returns {boolean}
  */
@@ -97,13 +98,49 @@ export const isOriginAllowed = (origin) => {
   if (!origin || typeof origin !== 'string') return false;
   const clean = normalizeOrigin(origin);
   if (!isValidOriginFormat(clean)) return false;
+
   const allowed = getAllowedOrigins();
-  return allowed.includes(clean);
+  if (allowed.includes(clean)) return true;
+
+  // Domain pattern matching for subdomains, ports, and hosting platforms
+  try {
+    const url = new URL(clean);
+    const hostname = url.hostname.toLowerCase();
+
+    // Match growrichmindset.in and all subdomains (www, dev, api, etc.)
+    if (
+      hostname === 'growrichmindset.in' ||
+      hostname.endsWith('.growrichmindset.in')
+    ) {
+      return true;
+    }
+
+    // Match eduvanta domains
+    if (hostname.includes('eduvanta')) {
+      return true;
+    }
+
+    // Match Cloud deploy previews (onrender.com, vercel.app, netlify.app)
+    if (
+      hostname.endsWith('.onrender.com') ||
+      hostname.endsWith('.vercel.app') ||
+      hostname.endsWith('.netlify.app')
+    ) {
+      return true;
+    }
+  } catch {
+    // Non-standard protocols (e.g. tauri://localhost)
+    if (clean.startsWith('tauri://') || clean.includes('tauri.localhost')) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 /**
  * Reads the request's Origin header, validates it against ALLOWED_ORIGINS, and returns it.
- * Falls back to https://www.growrichmindset.in (or FRONTEND_URL) when the header is absent,
+ * Falls back to https://growrichmindset.in (or FRONTEND_URL) when the header is absent,
  * or when an unvalidated/disallowed origin is provided (preventing open-redirect vulnerabilities).
  *
  * @param {import('express').Request|object} req
@@ -160,7 +197,7 @@ export const createCorsOptions = () => {
       return callback(null, false);
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
     allowedHeaders: [
       'Content-Type',
       'Authorization',
@@ -170,8 +207,9 @@ export const createCorsOptions = () => {
       'Accept',
       'Origin',
       'X-Requested-With',
+      'Range',
     ],
-    exposedHeaders: ['set-cookie'],
+    exposedHeaders: ['set-cookie', 'Content-Range', 'X-Total-Count'],
     optionsSuccessStatus: 204,
   };
 };

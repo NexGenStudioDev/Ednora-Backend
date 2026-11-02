@@ -178,13 +178,23 @@ const Course_Controller = {
 
   async FindAllCourses(req, res) {
     try {
-      const courses = await courseService.getAllCourses();
+      const { page, limit, search, department } = req.query;
+      const result = await courseService.getAllCourses({
+        page,
+        limit,
+        search,
+        department,
+      });
+
+      const courses = Array.isArray(result) ? result : result.courses || [];
+      const pagination = result.pagination;
 
       SendResponse.success(
         res,
         StatusCodeConstant.SUCCESS,
         courseConstant.COURSES_FOUND,
-        courses || []
+        courses,
+        pagination ? { pagination, total: pagination.total } : {}
       );
     } catch (error) {
       console.error('Error fetching courses:', error);

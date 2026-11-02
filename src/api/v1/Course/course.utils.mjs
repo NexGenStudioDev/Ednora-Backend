@@ -16,10 +16,57 @@ class Course_Utils {
     }
   };
 
-  FindAllCourses = async () => {
+  FindAllCourses = async (options = {}) => {
     try {
-      let courses = await courseModel.find({}).sort({ createdAt: -1 });
-      return courses;
+      const { page, limit, search, department } = options;
+      const filter = {};
+
+      if (department && department !== 'All' && department !== 'all') {
+        filter.Department = department;
+      }
+
+      if (search && typeof search === 'string' && search.trim()) {
+        const regex = new RegExp(search.trim(), 'i');
+        filter.$or = [
+          { courseName: regex },
+          { courseCode: regex },
+          { courseDescription: regex },
+        ];
+      }
+
+      const total = await courseModel.countDocuments(filter);
+      let query = courseModel.find(filter).sort({ createdAt: -1 });
+
+      if (page && limit) {
+        const pageNum = Math.max(1, parseInt(page, 10));
+        const limitNum = Math.max(1, parseInt(limit, 10));
+        query = query.skip((pageNum - 1) * limitNum).limit(limitNum);
+        const courses = await query;
+        return {
+          courses,
+          pagination: {
+            page: pageNum,
+            limit: limitNum,
+            total,
+            totalPages: Math.ceil(total / limitNum) || 1,
+            hasNextPage: pageNum * limitNum < total,
+            hasPrevPage: pageNum > 1,
+          },
+        };
+      }
+
+      const courses = await query;
+      return {
+        courses,
+        pagination: {
+          page: 1,
+          limit: total || courses.length,
+          total: total || courses.length,
+          totalPages: 1,
+          hasNextPage: false,
+          hasPrevPage: false,
+        },
+      };
     } catch (error) {
       throw new Error(error.message);
     }
@@ -45,8 +92,14 @@ class Course_Utils {
         course = await courseModel.findById(courseId);
       }
       if (!course && courseId && courseId !== 'undefined' && courseId !== 'null') {
+        const clean = decodeURIComponent(courseId).trim();
         course = await courseModel.findOne({
-          $or: [{ courseCode: courseId }, { courseName: courseId }],
+          $or: [
+            { courseCode: clean },
+            { courseName: clean },
+            { courseCode: new RegExp(`^${clean}$`, 'i') },
+            { courseName: new RegExp(`^${clean}$`, 'i') },
+          ],
         });
       }
       if (!course) {

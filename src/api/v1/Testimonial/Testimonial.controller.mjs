@@ -50,20 +50,11 @@ class Testimonial_Controller {
     try {
       let Find_Testimonial = await TestimonialUtils.FIND_ALL_Testimonials();
 
-      if (!Find_Testimonial || Find_Testimonial.length === 0) {
-        SendResponse.error(
-          res,
-          StatusCodeConstant.NOT_FOUND,
-          'No testimonials found'
-        );
-        return;
-      }
-
       SendResponse.success(
         res,
         StatusCodeConstant.SUCCESS,
         'Testimonials found',
-        Find_Testimonial
+        Find_Testimonial || []
       );
     } catch (error) {
       SendResponse.error(

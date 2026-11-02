@@ -27,9 +27,9 @@ class courseService {
     }
   }
 
-  async getAllCourses() {
+  async getAllCourses(options = {}) {
     try {
-      return await courseUtils.FindAllCourses();
+      return await courseUtils.FindAllCourses(options);
     } catch (error) {
       throw new Error(`Error fetching courses: ${error.message}`);
     }
