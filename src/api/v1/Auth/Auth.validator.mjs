@@ -1,33 +1,28 @@
-import Joi from 'joi';
 import { z } from 'zod';
-import { formatZodError } from '../../../utils/zod.utils.mjs';
+import { formatZodError, createJoiCompatibleValidator } from '../../../utils/zod.utils.mjs';
 
-// Legacy Joi SignUp Validator
-export const SignUp_Validator = Joi.object({
-  name: Joi.string().required().messages({
-    'string.base': 'Name must be a string',
-    'any.required': 'Name is required',
-  }),
+export const signUpZodSchema = z
+  .object({
+    name: z
+      .string({ required_error: 'Name is required' })
+      .trim()
+      .min(1, 'Name is required'),
+    email: z
+      .string({ required_error: 'Email is required' })
+      .trim()
+      .email('Email must be a valid email address'),
+    password: z
+      .string({ required_error: 'Password is required' })
+      .min(1, 'Password is required'),
+    confirm_Password: z
+      .string({ required_error: 'Confirm Password is required' }),
+  })
+  .refine((data) => data.password === data.confirm_Password, {
+    message: 'Confirm Password must match Password',
+    path: ['confirm_Password'],
+  });
 
-  email: Joi.string().email().required().messages({
-    'string.base': 'Email must be a valid email',
-    'any.required': 'Email is required',
-    'string.email': 'Email must be a valid email address',
-  }),
-
-  password: Joi.string().required().messages({
-    'string.base': 'Password must be a string',
-    'any.required': 'Password is required',
-  }),
-
-  confirm_Password: Joi.string()
-    .valid(Joi.ref('password'))
-    .required()
-    .messages({
-      'any.only': 'Confirm Password must match Password',
-      'any.required': 'Confirm Password is required',
-    }),
-});
+export const SignUp_Validator = createJoiCompatibleValidator(signUpZodSchema);
 
 // Zod Validation Schemas
 export const loginSchema = z.object({

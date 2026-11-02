@@ -9,7 +9,7 @@ const connectToDatabase = async () => {
   const connectionString =
     envConstant.MONGO_URI ||
     process.env.MONGO_URL ||
-    'mongodb://localhost:27017/ednora';
+    'mongodb://localhost:27017/eduvanta';
 
   try {
     lolcat.options.seed = Math.round(Math.random() * 1000);

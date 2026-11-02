@@ -1,28 +1,33 @@
-import Joi from 'joi';
+import { z } from 'zod';
+import { createJoiCompatibleValidator } from '../../../utils/zod.utils.mjs';
 
-export const TestimonialValidator = Joi.object({
-  name: Joi.string().required().messages({
-    'string.empty': 'Name is required',
-    'any.required': 'Name is required',
-  }),
-  email: Joi.string().email().required().messages({
-    'string.empty': 'Email is required',
-    'string.email': 'Email must be valid',
-    'any.required': 'Email is required',
-  }),
+export const testimonialZodSchema = z
+  .object({
+    name: z
+      .string({ required_error: 'Name is required' })
+      .trim()
+      .min(1, 'Name is required'),
+    email: z
+      .string({ required_error: 'Email is required' })
+      .trim()
+      .email('Email must be valid'),
+    message: z
+      .string({ required_error: 'Message is required' })
+      .trim()
+      .min(1, 'Message is required'),
+    job_Role: z
+      .string({ required_error: 'Job role is required' })
+      .trim()
+      .min(1, 'Job role is required'),
+    star: z
+      .union([z.number(), z.string()])
+      .transform((val) => Number(val))
+      .refine((val) => !isNaN(val) && val >= 0 && val <= 5, {
+        message: 'Star rating must be a number between 0 and 5',
+      }),
+  })
+  .passthrough();
 
-  message: Joi.string().required().messages({
-    'string.empty': 'Message is required',
-    'any.required': 'Message is required',
-  }),
-  job_Role: Joi.string().required().messages({
-    'string.empty': 'Job role is required',
-    'any.required': 'Job role is required',
-  }),
-  star: Joi.number().min(0).max(5).required().messages({
-    'number.base': 'Star rating must be a number',
-    'number.min': 'Star rating cannot be less than 0',
-    'number.max': 'Star rating cannot be more than 5',
-    'any.required': 'Star rating is required',
-  }),
-});
+export const TestimonialValidator = createJoiCompatibleValidator(testimonialZodSchema);
+
+export default TestimonialValidator;

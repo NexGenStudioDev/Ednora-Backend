@@ -43,6 +43,9 @@ const noticeSchema = new Schema(
   { timestamps: true }
 );
 
+noticeSchema.index({ type: 1, createdAt: -1 });
+noticeSchema.index({ createdAt: -1 });
+
 const Notice = model('Notice', noticeSchema);
 
 export default Notice;

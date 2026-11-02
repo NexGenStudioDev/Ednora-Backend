@@ -1,23 +1,24 @@
-import Joi from 'joi';
+import { z } from 'zod';
+import { createJoiCompatibleValidator } from '../../../utils/zod.utils.mjs';
 
-let Create_Album_Validator = Joi.object({
-  albumName: Joi.string().required().messages({
-    'string.empty': 'Image Name is empty',
-    'string.base': 'Image Name must be a string',
-    'any.required': 'Image Name is required',
-  }),
+export const albumZodSchema = z
+  .object({
+    albumName: z
+      .string({ required_error: 'Album name is required' })
+      .trim()
+      .min(1, 'Album name cannot be empty'),
+    albumImageUrl: z
+      .string({ required_error: 'Album Image Url is required' })
+      .trim()
+      .min(1, 'Album Image Url is required'),
+    albumDescription: z
+      .string({ required_error: 'Description is required' })
+      .trim()
+      .min(5, 'Description must be at least 5 characters')
+      .max(255, 'Description must be at most 255 characters'),
+  })
+  .passthrough();
 
-  albumImageUrl: Joi.string().trim().required().messages({
-    'string.empty': 'Album Image Url In Required',
-    'any.required': 'Album Image Url In Required',
-  }),
-
-  albumDescription: Joi.string().min(5).max(225).required().messages({
-    'string.empty': 'Description is required',
-    'string.min': 'Description must be at least 5 characters',
-    'string.max': 'Description must be at most 255 characters',
-    'any.required': 'Description is required',
-  }),
-});
+export const Create_Album_Validator = createJoiCompatibleValidator(albumZodSchema);
 
 export default Create_Album_Validator;

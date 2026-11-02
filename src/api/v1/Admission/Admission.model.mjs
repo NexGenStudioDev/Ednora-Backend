@@ -232,7 +232,11 @@ const AdmissionSchema = new Schema({
     type: Boolean,
     default: false,
   },
-});
+}, { timestamps: true });
+
+AdmissionSchema.index({ status: 1, createdAt: -1 });
+AdmissionSchema.index({ 'student.email': 1 });
+AdmissionSchema.index({ createdAt: -1 });
 
 AdmissionSchema.methods.generate_id = async function () {
   const otp = otpGenerator.generate(6, {

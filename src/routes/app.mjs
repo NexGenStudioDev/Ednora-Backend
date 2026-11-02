@@ -22,6 +22,42 @@ import { Fee_Routes } from '../api/v1/Fee/fee.routes.mjs';
 import { TestimonialRouter } from '../api/v1/Testimonial/Testimonial.routes.mjs';
 import { QueueRouter } from '../api/v1/Queue/Queue.routes.mjs';
 import { createCorsOptions } from '../utils/origin.utils.mjs';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
+  message: {
+    status: false,
+    statusCode: 429,
+    message: 'Too many requests, please try again after 15 minutes',
+    error: true,
+  },
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
+  message: {
+    status: false,
+    statusCode: 429,
+    message: 'Too many authentication attempts, please try again after 15 minutes',
+    error: true,
+  },
+});
+
+app.use(helmet({ crossOriginResourcePolicy: false, contentSecurityPolicy: false }));
+app.use('/api', generalLimiter);
+app.use('/api/v1/auth/login', authLimiter);
+app.use('/api/v1/validate/password', authLimiter);
+app.use('/api/v1/forget-password', authLimiter);
 
 app.use((req, res, next) => {
   console.log('METHOD :', req.method);

@@ -1,77 +1,58 @@
-import Joi from 'joi';
+import { z } from 'zod';
 import { DepartmentConstant } from './course.constant.mjs';
+import { createJoiCompatibleValidator } from '../../../utils/zod.utils.mjs';
 
-export const courseValidationSchema = Joi.object({
-  courseName: Joi.string().trim().min(3).required().messages({
-    'string.empty': 'Course name cannot be empty',
-    'any.required': 'Course name is required',
-    'string.base': 'Course name must be a valid string',
-    'string.min': 'Course name must have at least 3 characters',
-  }),
-
-  AdmissionCriteria: Joi.array()
-    .items(
-      Joi.string().trim().required().messages({
-        'string.empty': 'Admission criteria cannot be empty',
-        'string.base': 'Admission criteria must be a valid string',
+export const courseZodSchema = z
+  .object({
+    courseName: z
+      .string({ required_error: 'Course name is required' })
+      .trim()
+      .min(3, 'Course name must have at least 3 characters'),
+    AdmissionCriteria: z
+      .array(z.string().trim().min(1, 'Admission criteria cannot be empty'), {
+        required_error: 'Admission criteria are required',
       })
-    )
-    .min(1)
-    .required()
-    .messages({
-      'array.base': 'Admission criteria must be an array',
-      'array.min': 'At least one admission criterion is required',
-      'any.required': 'Admission criteria are required',
-    }),
+      .min(1, 'At least one admission criterion is required'),
+    courseCode: z
+      .string({ required_error: 'Course code is required' })
+      .trim()
+      .min(3, 'Course code must have at least 3 characters'),
+    courseDescription: z
+      .string({ required_error: 'Course description is required' })
+      .trim()
+      .min(1, 'Course description cannot be empty'),
+    courseDuration: z
+      .string({ required_error: 'Course duration is required' })
+      .trim()
+      .min(1, 'Course duration cannot be empty'),
+    courseEligibility: z
+      .string({ required_error: 'Course eligibility is required' })
+      .trim()
+      .min(1, 'Course eligibility cannot be empty'),
+    courseThumbnail: z
+      .string({ required_error: 'Course thumbnail URL is required' })
+      .trim()
+      .min(1, 'Course thumbnail URL cannot be empty'),
+    courseLogo: z
+      .string()
+      .trim()
+      .nullable()
+      .optional()
+      .or(z.literal('')),
+    coursePrice: z
+      .number({ required_error: 'Course price is required' })
+      .min(0, 'Course price cannot be negative'),
+    Department: z
+      .string({ required_error: 'Department is required' })
+      .refine(
+        (val) => DepartmentConstant.includes(val),
+        {
+          message: `Department must be one of the following: ${DepartmentConstant.join(', ')}`,
+        }
+      ),
+  })
+  .passthrough();
 
-  courseCode: Joi.string().trim().min(3).required().messages({
-    'string.empty': 'Course code cannot be empty',
-    'any.required': 'Course code is required',
-    'string.base': 'Course code must be a valid string',
-    'string.min': 'Course code must have at least 3 characters',
-  }),
+export const courseValidationSchema = createJoiCompatibleValidator(courseZodSchema);
 
-  courseDescription: Joi.string().trim().required().messages({
-    'string.empty': 'Course description cannot be empty',
-    'any.required': 'Course description is required',
-    'string.base': 'Course description must be a valid string',
-  }),
-
-  courseDuration: Joi.string().trim().required().messages({
-    'string.empty': 'Course duration cannot be empty',
-    'any.required': 'Course duration is required',
-    'string.base': 'Course duration must be a valid string',
-  }),
-
-  courseEligibility: Joi.string().trim().required().messages({
-    'string.empty': 'Course eligibility cannot be empty',
-    'any.required': 'Course eligibility is required',
-    'string.base': 'Course eligibility must be a valid string',
-  }),
-
-  courseThumbnail: Joi.string().trim().required().messages({
-    'string.empty': 'Course thumbnail URL cannot be empty',
-    'any.required': 'Course thumbnail URL is required',
-    'string.base': 'Course thumbnail must be a valid string',
-  }),
-
-  courseLogo: Joi.string().trim().allow(null, '').optional().messages({
-    'string.base': 'Course logo must be a valid string',
-  }),
-
-  coursePrice: Joi.number().min(0).required().messages({
-    'number.base': 'Course price must be a valid number',
-    'number.min': 'Course price cannot be negative',
-    'any.required': 'Course price is required',
-  }),
-
-  Department: Joi.string()
-    .valid(...DepartmentConstant)
-    .required()
-    .messages({
-      'any.only': `Department must be one of the following: ${DepartmentConstant.join(
-        ', '
-      )}`,
-      'any.required': 'Department is required',
-    }),
-});
+export default courseValidationSchema;

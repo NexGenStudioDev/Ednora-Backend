@@ -1,38 +1,43 @@
-import Joi from 'joi';
+import { z } from 'zod';
+import { createJoiCompatibleValidator } from '../../../utils/zod.utils.mjs';
 
-/**
- * Validation schema for password reset request
- */
-export const ForgotPasswordRequestValidator = Joi.object({
-  email: Joi.string().email().required().messages({
-    'string.email': 'Please provide a valid email address',
-    'any.required': 'Email is required',
-    'string.empty': 'Email cannot be empty',
-  }),
-});
+export const forgotPasswordRequestZodSchema = z
+  .object({
+    email: z
+      .string({ required_error: 'Email is required' })
+      .trim()
+      .email('Please provide a valid email address'),
+  })
+  .passthrough();
 
-/**
- * Validation schema for password reset validation
- */
-export const ValidatePasswordResetValidator = Joi.object({
-  email: Joi.string().email().required().messages({
-    'string.email': 'Please provide a valid email address',
-    'any.required': 'Email is required',
-    'string.empty': 'Email cannot be empty',
-  }),
+export const validatePasswordResetZodSchema = z
+  .object({
+    email: z
+      .string({ required_error: 'Email is required' })
+      .trim()
+      .email('Please provide a valid email address'),
+    otp: z
+      .union([z.string(), z.number()])
+      .transform((val) => String(val).trim())
+      .refine((val) => /^\d{6}$/.test(val), {
+        message: 'OTP must be a 6-digit number',
+      }),
+    newPassword: z
+      .string({ required_error: 'New password is required' })
+      .trim()
+      .min(6, 'Password must be at least 6 characters long'),
+  })
+  .passthrough();
 
-  otp: Joi.string()
-    .pattern(/^\d{6}$/)
-    .required()
-    .messages({
-      'string.pattern.base': 'OTP must be a 6-digit number',
-      'any.required': 'OTP is required',
-      'string.empty': 'OTP cannot be empty',
-    }),
+export const ForgotPasswordRequestValidator = createJoiCompatibleValidator(
+  forgotPasswordRequestZodSchema
+);
 
-  newPassword: Joi.string().min(6).required().messages({
-    'string.min': 'Password must be at least 6 characters long',
-    'any.required': 'New password is required',
-    'string.empty': 'New password cannot be empty',
-  }),
-});
+export const ValidatePasswordResetValidator = createJoiCompatibleValidator(
+  validatePasswordResetZodSchema
+);
+
+export default {
+  ForgotPasswordRequestValidator,
+  ValidatePasswordResetValidator,
+};

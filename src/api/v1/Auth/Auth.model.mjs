@@ -92,7 +92,7 @@ AuthenticationSchema.methods.comparePassword = async function (password, hash) {
     }
     return match;
   } catch (error) {
-    throw new Error(`Error checking user role: ${error.message}`);
+    throw new Error(`Password comparison error: ${error.message}`);
   }
 };
 
