@@ -244,7 +244,7 @@ AdmissionSchema.methods.generate_id = async function () {
     specialChars: false,
   });
 
-  const uniqueId = `EDNORA_${otp}`;
+  const uniqueId = `EDUVANTA_${otp}`;
   return uniqueId;
 };
 
@@ -313,13 +313,19 @@ AdmissionSchema.query.isAdmitted = function (Boolean) {
 
 AdmissionSchema.pre('save', async function (next) {
   try {
-    const Course_detail = await courseModel.findOne({ _id: this.course_Id });
-    this.fee.course_Fee = Course_detail.coursePrice;
-    this.fee.amount_due = Course_detail.coursePrice;
-
+    if (!this.fee) {
+      this.fee = { amount_paid: 0, late_Fine: 0, amount_due: 0, course_Fee: 0 };
+    }
+    if (this.course_Id) {
+      const Course_detail = await courseModel.findOne({ _id: this.course_Id });
+      if (Course_detail && Course_detail.coursePrice !== undefined) {
+        this.fee.course_Fee = Course_detail.coursePrice;
+        this.fee.amount_due = Course_detail.coursePrice;
+      }
+    }
     next();
   } catch (error) {
-    throw new Error(error.message || 'Failed to generate unique id');
+    next(error);
   }
 });
 

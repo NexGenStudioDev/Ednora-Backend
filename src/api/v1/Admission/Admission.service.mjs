@@ -9,54 +9,53 @@ class Admission_Service {
 
         student: {
           firstName: data.firstName,
-          middleName: data.middleName,
+          middleName: data.middleName || '',
           lastName: data.lastName,
           fatherName: data.fatherName,
           motherName: data.motherName,
           email: data.email,
-          mobileNumber: data.mobileNumber,
           dateOfBirth: data.dateOfBirth,
           gender: data.gender,
           nationality: data.nationality,
-          contactNumber: Number(data.contactNumber),
+          contactNumber: String(data.contactNumber),
           avtar: image_Url,
         },
 
         guardian: {
           Gname: data.Gname,
           Grelation: data.Grelation,
-          GcontactNumber: Number(data.GcontactNumber),
+          GcontactNumber: String(data.GcontactNumber),
         },
 
         address: {
           street: data.street,
           city: data.city,
           state: data.state,
-          pinCode: data.pinCode,
+          pinCode: Number(data.pinCode),
         },
 
         AadharCard: {
-          AadharCardNumber: data.AadharCardNumber,
+          AadharCardNumber: String(data.AadharCardNumber),
         },
 
         tenth: {
-          tenthMarks: data.tenthMarks,
+          tenthMarks: Number(data.tenthMarks),
           tenthBoard: data.tenthBoard,
           tenthGrade: data.tenthGrade,
         },
 
         twelfth: {
-          twelfthMarks: data.twelfthMarks,
-
+          twelfthMarks: Number(data.twelfthMarks),
           twelfthBoard: data.twelfthBoard,
-
           twelfthGrade: data.twelfthGrade,
         },
 
-        amount_paid: 0,
-        late_Fine: 0,
-        amount_due: 0,
-        course_Fee: 0,
+        fee: {
+          amount_paid: 0,
+          late_Fine: 0,
+          amount_due: course?.coursePrice || 0,
+          course_Fee: course?.coursePrice || 0,
+        },
 
         course_Id: course._id,
         mode: data.mode,
